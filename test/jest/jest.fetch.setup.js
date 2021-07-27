@@ -246,6 +246,14 @@ beforeEach(() => {
                   href: '/api/program/4/environment/3/logs?service={service}&name={name}&days={days}',
                   templated: true,
                 },
+                'http://ns.adobe.com/adobecloud/rel/commerceCommandExecution': {
+                  href: '/api/program/4/environment/3/runtime/commerce/command-execution',
+                  templated: false,
+                },
+                'http://ns.adobe.com/adobecloud/rel/commerceCommandExecution/id': {
+                  href: '/api/program/4/environment/3/runtime/commerce/command-execution/1/{executionId}',
+                  templated: true,
+                },
               },
               id: '3',
               programId: '4',
@@ -261,6 +269,14 @@ beforeEach(() => {
                 },
                 'http://ns.adobe.com/adobecloud/rel/variables': {
                   href: '/api/program/4/environment/10/variables',
+                },
+                'http://ns.adobe.com/adobecloud/rel/commerceCommandExecution': {
+                  href: '/api/program/4/environment/10/runtime/commerce/command-execution',
+                  templated: false,
+                },
+                'http://ns.adobe.com/adobecloud/rel/commerceCommandExecution/id': {
+                  href: '/api/program/4/environment/10/runtime/commerce/command-execution/1/{executionId}',
+                  templated: true,
                 },
               },
               id: '10',
@@ -1638,4 +1654,34 @@ beforeEach(() => {
     },
   })
   fetchMock.mock('https://cloudmanager.adobe.io/api/program/9/ipAllowlists', 400)
+
+  // Commerce command execution mocks
+  fetchMock.mock('https://cloudmanager.adobe.io/api/program/4/environment/9/runtime/commerce/command-execution/', 403)
+  fetchMock.mock('https://cloudmanager.adobe.io/api/program/6/environment/7/runtime/commerce/command-execution/8', 404)
+
+  mockResponseWithMethod('https://cloudmanager.adobe.io/api/program/4/environment/10/runtime/commerce/command-execution', 'GET', {
+    id: 1,
+    status: 'RUNNNG', // PENDING, RUNNING, COMPLETED, FAILED
+    type: 'bin/magento', // bin/magento, bin/ece-tools
+    command: 'test command to be executed',
+    message: 'One line message on the progress of command',
+    options: ['Optional', 'inputs provided part of the command'],
+    startedAt: 'timestamp UTC',
+    completedAt: 'timestamp utc',
+    startedBy: 'test runner',
+    _links: {
+      self: {
+        href: '/api/program/4/environment/10/runtime/commerce/command-execution/1',
+      },
+      'http://ns.adobe.com/adobecloud/rel/program': {
+        href: '/api/program/4',
+      },
+      'http://ns.adobe.com/adobecloud/rel/environments': {
+        href: '/api/program/4/environments',
+      },
+      'http://ns.adobe.com/adobecloud/rel/commerceCommandExecutions': {
+        href: '/api/program/4/environment/10/runtime/commerce/command-executions',
+      },
+    },
+  })
 })
